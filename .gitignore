@@ -1,0 +1,19 @@
+# Fichiers d'environnement et secrets
+.env
+.env.local
+
+# Dépendances
+/node_modules
+/vendor
+__pycache__/
+*.pyc
+
+# Stockage local des images
+/storage/app/public/images
+/uploads
+
+# Fichiers système et IDE
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
