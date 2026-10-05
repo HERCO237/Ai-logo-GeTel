@@ -1,59 +1,68 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+---
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+## 💻 Déploiement et Configuration sur une autre machine
 
-## About Laravel
+Pour installer et faire fonctionner ce backend sur une nouvelle machine d'un collaborateur, suivez rigoureusement ces étapes :
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+### 1. Prérequis système
+Assurez-vous que la machine cible dispose de :
+*   **PHP ≥ 8.2** (avec les extensions requises par Laravel : `bcmath`, `ctype`, `fileinfo`, `openssl`, `pdo_mysql`, etc.)
+*   **Composer** (Gestionnaire de dépendances PHP)
+*   Un serveur de base de données (**MySQL** / MariaDB ou PostgreSQL)
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+### 2. Récupération et installation du projet
+Ouvrez un terminal et exécutez les commandes suivantes dans votre répertoire de travail :
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+```bash
+# 1. Cloner le projet (si ce n'est pas déjà fait)
+git clone https://github.com...
+cd Ai-logo-GeTel
 
-## Learning Laravel
+# 2. Accéder au dossier backend
+cd backend
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+# 3. Installer toutes les dépendances PHP requises
+composer install
+```
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### 3. Configuration de l'environnement local
+```bash
+# 1. Dupliquer le fichier d'exemple pour créer le vrai fichier de configuration
+cp .env.example .env
 
-## Laravel Sponsors
+# 2. Générer la clé de chiffrement unique de l'application Laravel
+php artisan key:generate
+```
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+### 4. Configuration de la Base de Données
+Créez une base de données vide (ex: `ai_logo_getel`) via votre outil de gestion (phpMyAdmin, TablePlus, DBeaver) puis ouvrez le fichier `.env` fraîchement créé pour y renseigner vos identifiants :
 
-### Premium Partners
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=ai_logo_getel
+DB_USERNAME=votre_utilisateur_local  # Généralement 'root'
+DB_PASSWORD=votre_mot_de_passe_local # Généralement vide '' ou 'root'
+```
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+### 5. Préparation de la base et du stockage
+```bash
+# 1. Jouer les migrations pour construire la structure des tables (users, otps, personal_access_tokens)
+php artisan migrate
 
-## Contributing
+# 2. Créer le lien symbolique indispensable pour l'affichage public des avatars/photos de profil téléchargés
+php artisan storage:link
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### 6. Lancement de l'API
+Pour démarrer le serveur de développement local :
+```bash
+php artisan serve
+```
+L'API sera accessible à l'adresse suivante : **`http://127.0.0.1:8000`**.  
+Les routes de ce module s'appellent ainsi à l'adresse : `http://127.0.0`, etc.
 
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+### 🧪 Configuration Postman / Insomnia pour les tests
+*   **Pour les requêtes d'inscription (`/register`) :** Envoyez les données au format `multipart/form-data` pour permettre l'envoi de la photo de profil (`photo`).
+*   **Pour les routes protégées :** Ajoutez le Header `Authorization: Bearer <votre_token_recu_au_login>` à chaque requête.
